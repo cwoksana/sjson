@@ -456,10 +456,17 @@ func TestDeleteMany(t *testing.T) {
 		errExp    error
 	}{
 		{
-			name:      "success_nested_object_path",
+			name:      "success_nested_object_value_simple",
 			body:      `{"object":{"nestedObject":{"name":"test","value":15,"deleted":true}}}`,
 			jsonPaths: []string{"object.nestedObject.value", "object.nestedObject.name"},
 			resExp:    `{"object":{"nestedObject":{"deleted":true}}}`,
+			errExp:    nil,
+		},
+		{
+			name:      "success_nested_object_value_array",
+			body:      `{"object":{"nestedObject":{"name":"test","value":[{"name":"array1","value":1},{"name":"array2","value":2}]}}}`,
+			jsonPaths: []string{"object.nestedObject.value"},
+			resExp:    `{"object":{"nestedObject":{"name":"test"}}}`,
 			errExp:    nil,
 		},
 		{
@@ -467,6 +474,13 @@ func TestDeleteMany(t *testing.T) {
 			body:      `[{"name":"object1","value":1,"nested":{"id":"one","desc":"nested one"}},{"name":"object2","value":19,"nested":{"id":"two","desc":"nested two"}}]`,
 			jsonPaths: []string{"#.nested.desc", "#.nonexistent"},
 			resExp:    `[{"name":"object1","value":1,"nested":{"id":"one"}},{"name":"object2","value":19,"nested":{"id":"two"}}]`,
+			errExp:    nil,
+		},
+		{
+			name:      "success_array_nested_object_field_array",
+			body:      `[{"name":"object1","value":1,"nested":{"id":"one","value":[{"name":"array1","value":1},{"name":"array2","value":2}]}},{"name":"object2","value":19,"nested":{"id":"two","desc":"nested two","value":[{"name":"array1","value":1}]}}]`,
+			jsonPaths: []string{"#.nested.value", "#.nonexistent"},
+			resExp:    `[{"name":"object1","value":1,"nested":{"id":"one"}},{"name":"object2","value":19,"nested":{"id":"two","desc":"nested two"}}]`,
 			errExp:    nil,
 		},
 		{
@@ -487,7 +501,7 @@ func TestDeleteMany(t *testing.T) {
 			name:      "success_many_times_nested_array_field",
 			body:      `[{"name":"object1","value":1,"nestedArray":[{"id":"one","nestedArray":[{"name":"nested1","desc":"nested 1","nestedArray":[{"name":"nested 2","desc":"nested 2","nestedArray":[{"name":"nested 3","desc":"nested 2"},{"name":"nested 4","desc":"nested 3"}]},{"name":"nested 5","desc":"nested 5"}]},{"name":"nested 6","desc":"nested 6","nestedArray":[{"name":"nested 7","desc":"nested 7","nestedArray":[{"name":"nested 8","desc":"nested 8"},{"name":"nested 9","desc":"nested 9"},{"name":"nested 10"}]},{"name":"nested 11","desc":"nested 11","nestedArray":[{"name":"nested 12","desc":"nested 12","nestedArray":[{"name":"nested 11111111","desc":"nested 11111"}]}]},{"name":"nested 12","desc":"nested 12"}]}]},{"id":"two","nestedArray":[{"name":"nested 13","desc":"nested 13","nestedArray":[{"name":"nested 14","desc":"nested 14"},{"name":"nested 15","desc":"nested 15"}]},{"name":"nested 16","desc":"nested 16"}]}]},{"name":"object2","value":2,"nestedArray":[{"id":"one","nestedArray":[{"name":"nested 17","desc":"nested 17","nestedArray":[{"name":"nested 18","desc":"nested 18","nestedArray":[{"name":"nested 19","desc":"nested 19"},{"name":"nested 20","desc":"nested 20"}]},{"name":"nested 21","desc":"nested 21"}]},{"name":"nested 22","desc":"nested 22","nestedArray":[{"name":"nested 23","desc":"nested 23"},{"name":"nested 24","desc":"nested 24"},{"name":"nested 25","desc":"nested 25","nestedArray":[{"name":"nested 26","desc":"nested 26"},{"name":"nested 27","desc":"nested 27"}]}]}]},{"id":"two","nestedArray":[{"name":"nested 28","desc":"nested 28","nestedArray":[{"name":"nested 29","desc":"nested 29"},{"name":"nested 30","desc":"nested 30","nestedArray":[{"name":"nested 31","desc":"nested 31","nestedArray":[{"name":"nested 32","desc":"nested 32"},{"name":"nested 33","desc":"nested 33"}]},{"name":"nested 34","desc":"nested 34"}]}]},{"name":"nested22","desc":"nested 22"}]}]}]`,
 			jsonPaths: []string{"#.nestedArray.#.nestedArray.#.nestedArray.#.nestedArray.#.desc", "#.value", "#.nestedArray.#.nestedArray.#.nestedArray.#.nestedArray.#.nestedArray.#.desc"},
-			resExp:    `{"name":"object1","nestedArray":[{"id":"one","nestedArray":[{"name":"nested11","desc":"nested 11","nestedArray":[{"name":"nested111"},{"name":"nested112"}]},{"name":"nested12","desc":"nested 12","nestedArray":[{"name":"nested121"},{"name":"nested122"},{"name":"nested123"}]},]},{"id":"two","nestedArray":[{"name":"nested21","desc":"nested 21","nestedArray":[{"name":"nested211"},{"name":"nested212"}]},{"name":"nested22","desc":"nested 22"}]}]}`,
+			resExp:    `[{"name":"object1","nestedArray":[{"id":"one","nestedArray":[{"name":"nested1","desc":"nested 1","nestedArray":[{"name":"nested 2","desc":"nested 2","nestedArray":[{"name":"nested 3"},{"name":"nested 4"}]},{"name":"nested 5","desc":"nested 5"}]},{"name":"nested 6","desc":"nested 6","nestedArray":[{"name":"nested 7","desc":"nested 7","nestedArray":[{"name":"nested 8"},{"name":"nested 9"},{"name":"nested 10"}]},{"name":"nested 11","desc":"nested 11","nestedArray":[{"name":"nested 12","nestedArray":[{"name":"nested 11111111"}]}]},{"name":"nested 12","desc":"nested 12"}]}]},{"id":"two","nestedArray":[{"name":"nested 13","desc":"nested 13","nestedArray":[{"name":"nested 14","desc":"nested 14"},{"name":"nested 15","desc":"nested 15"}]},{"name":"nested 16","desc":"nested 16"}]}]},{"name":"object2","nestedArray":[{"id":"one","nestedArray":[{"name":"nested 17","desc":"nested 17","nestedArray":[{"name":"nested 18","desc":"nested 18","nestedArray":[{"name":"nested 19"},{"name":"nested 20"}]},{"name":"nested 21","desc":"nested 21"}]},{"name":"nested 22","desc":"nested 22","nestedArray":[{"name":"nested 23","desc":"nested 23"},{"name":"nested 24","desc":"nested 24"},{"name":"nested 25","desc":"nested 25","nestedArray":[{"name":"nested 26"},{"name":"nested 27"}]}]}]},{"id":"two","nestedArray":[{"name":"nested 28","desc":"nested 28","nestedArray":[{"name":"nested 29","desc":"nested 29"},{"name":"nested 30","desc":"nested 30","nestedArray":[{"name":"nested 31","nestedArray":[{"name":"nested 32"},{"name":"nested 33"}]},{"name":"nested 34"}]}]},{"name":"nested22","desc":"nested 22"}]}]}]`,
 			errExp:    nil,
 		},
 	}
