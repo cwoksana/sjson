@@ -532,7 +532,7 @@ func DeleteMany(json string, paths []string) (string, error) {
 }
 
 func getResults(result gjson.Result) (all []gjson.Result) {
-	if result.IsArray() && len(result.Indexes) != 0 {
+	if result.IsParsableArray() {
 		for _, res := range result.Array() {
 			r := getResults(res)
 			all = append(all, r...)
