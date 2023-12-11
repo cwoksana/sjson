@@ -1,8 +1,0 @@
-# github.com/tidwall/gjson v1.14.2 => github.com/cwoksana/gjson v0.0.0-20231211141310-07ec202fe59a
-## explicit
-github.com/tidwall/gjson
-# github.com/tidwall/match v1.1.1
-github.com/tidwall/match
-# github.com/tidwall/pretty v1.2.0
-## explicit
-github.com/tidwall/pretty
