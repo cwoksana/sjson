@@ -7,4 +7,4 @@ require (
 	github.com/tidwall/pretty v1.2.0
 )
 
-replace github.com/tidwall/gjson v1.14.2 => github.com/cwoksana/gjson v0.0.0-20231211141310-07ec202fe59a
+replace github.com/tidwall/gjson v1.14.2 => github.com/ishveda/gjson v0.0.0-20231214160859-a4afcd0d3f1b

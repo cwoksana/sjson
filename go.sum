@@ -1,5 +1,5 @@
-github.com/cwoksana/gjson v0.0.0-20231211141310-07ec202fe59a h1:VgtS6VBfoL137wjtCfDiKqZ6p7wmMRtbqCKeRTeVRQ8=
-github.com/cwoksana/gjson v0.0.0-20231211141310-07ec202fe59a/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vlfC0lxk=
+github.com/ishveda/gjson v0.0.0-20231214160859-a4afcd0d3f1b h1:mhnTDqik4o9W7PkZVCAGyoE4YbWf0HmGM7iX+O1rblY=
+github.com/ishveda/gjson v0.0.0-20231214160859-a4afcd0d3f1b/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vlfC0lxk=
 github.com/tidwall/match v1.1.1 h1:+Ho715JplO36QYgwN9PGYNhgZvoUSc9X2c80KVTi+GA=
 github.com/tidwall/match v1.1.1/go.mod h1:eRSPERbgtNPcGhD8UCthc6PmLEQXEWd3PRB5JTxsfmM=
 github.com/tidwall/pretty v1.2.0 h1:RWIZEg2iJ8/g6fDDYzMpobmaoGh5OLl4AXtGUGPcqCs=
