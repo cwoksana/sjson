@@ -482,6 +482,68 @@ func SetRawBytes(json []byte, path string, value []byte) ([]byte, error) {
 
 type dtype struct{}
 
+// DeleteMany deletes values from json for the specified paths.
+func DeleteMany(json string, paths []string) (string, error) {
+	var results []gjson.Result
+
+	for _, path := range paths {
+		res := gjson.Get(json, path)
+
+		if res.Index == 0 && len(res.Indexes) == 0 {
+			continue
+		}
+
+		pathResults := getResults(res)
+
+		results = append(results, pathResults...)
+	}
+
+	if len(results) == 0 {
+		return json, nil
+	}
+
+	sort.SliceStable(results, func(i, j int) bool {
+		return results[i].Index > results[j].Index
+	})
+
+	for _, res := range results {
+		njson := []byte(json[:res.Index])
+		var exidx int
+		var delNextComma bool
+
+		njson, delNextComma = deleteTailItem(njson)
+		if delNextComma {
+			i, j := res.Index+len(res.Raw), 0
+			for ; i < len(json); i, j = i+1, j+1 {
+				if json[i] <= ' ' {
+					continue
+				}
+				if json[i] == ',' {
+					exidx = j + 1
+				}
+				break
+			}
+		}
+		njson = append(njson, json[res.Index+len(res.Raw)+exidx:]...)
+		json = string(njson)
+	}
+
+	return json, nil
+}
+
+func getResults(result gjson.Result) (all []gjson.Result) {
+	if result.IsParsableArray() {
+		for _, res := range result.Array() {
+			r := getResults(res)
+			all = append(all, r...)
+		}
+	} else {
+		all = append(all, result)
+	}
+
+	return all
+}
+
 // Delete deletes a value from json for the specified path.
 func Delete(json, path string) (string, error) {
 	return Set(json, path, dtype{})
